@@ -444,34 +444,37 @@ Note to users: please make sure your proposed use case is legal in your jurisdic
 
 ## Distributed Exchange
 
-The Omni Protocol allows users to trade coins without trusting a centralized website. When trading Mastercoins for bitcoins, this can be rather cumbersome, since it isn't possible to automatically match bids with asks, since we can't force the bidder to send bitcoins when a matching ask is found. When trading Mastercoins for other Omni Protocol currencies, bids and asks are matched automatically.
+The Omni Protocol allows users to trade tokens without trusting a centralized website. When trading Omni Protocol tokens, including Omni Tokens, for bitcoins, this can be cumbersome, since it isn't possible to automatically match bids with asks, because we can't force the bidder to send bitcoins when a matching ask is found. When trading Omni Protocol tokens for other Omni Protocol tokens, bids and asks are matched automatically.
 
-Consequently, the messages below are different for mastercoin/bitcoin exchange than they are for exchange between mastercoin and other Omni Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/mastercoin exchange as well as the additional anti-spam fees and race conditions inherent in the system.
+Consequently, the messages below are different for Omni Protocol token/bitcoin exchange than they are for exchange between Omni Protocol tokens, and the resulting UI must also be different, reflecting both the one-sided nature of Omni Protocol token/bitcoin exchange as well as the additional anti-spam fees and race conditions inherent in the system.
 
-### Sell Mastercoins for Bitcoins
+### Sell Omni Protocol Tokens for Bitcoins
 
-Description: Transaction type 20 posts the terms of an offer to sell Mastercoins or Test Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for MSC or 2 for Test MSC.
+Description: Transaction type 20, version 2 posts the terms of an offer to sell tokens of an Omni Protocol currency for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are any existing Omni Protocol property identifiers.
 
-If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
+Note: Transaction type 20, version 1 posts the terms of an offer to sell Omni Tokens or Test Omni Tokens for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for Omni Tokens or 2 for Test Omni Tokens.
+
+**Is this still true, starting with support for selling any OL currency for bitcoins?**
+Note: An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has *any* active offer that accepts Bitcoins. Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins.
+
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is processed and published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 tokens of an Omni Protocol currency and it creates a "Sell Order" for 100 of those tokens, then the address's available balance for that currency is now 0, reserving 100 tokens of that currency.) Any tokens of that currency received by the address after the sell offer is published are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired tokens, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
 
 The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
 
-Note: An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has *any* active offer that accepts Bitcoins. Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins.
-
-Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 34 bytes:
+Say you want to publish an offer to sell 1.5 Omni Tokens for 1000 bitcoins. Doing this takes 34 bytes:
 
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ---- |
 | Transaction version |[Transaction version](#field-transaction-version) | 1 |
 | Transaction type | [Transaction type](#field-transaction-type) | 20| 
-|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Omni Token) |
 |Amount for sale|[Number of Coins](#field-number-of-coins)|150,000,000 (1.5 coins) |
 |Amount of bitcoins desired|[Number of Coins](#field-number-of-coins)|100,000,000,000 (1000.0 coins) |
 |Payment window|[Time Period in Blocks](#field-time-period-in-blocks) | 10  (10 blocks to send payment after counter-party accepts these terms)|
 |Minimum bitcoin transaction fee|[Number of coins](#field-number-of-coins) | 10,000,000 (buyer must pay 0.1 BTC fee to the miner, discouraging fake offers)|
 |Action|[Sell Offer sub-action](#field-sell-offer-sub-action) | 1 (New offer)|
 
-Note that some trading of Test MSC was done with version 0 of this message which did not have the Action field. Those transactions are treated as Action=3 (Cancel offer) when the Amount for sale is zero. For version 0 of this message and Amount for sale = 0 (Cancel offer), the values in the following fields are not tested for validity:
+Note that some trading of Test Omni Tokens was done with version 0 of this message which did not have the Action field. Those transactions are treated as Action=3 (Cancel offer) when the Amount for sale is zero. For version 0 of this message and Amount for sale = 0 (Cancel offer), the values in the following fields are not tested for validity:
 * Amount of bitcoins desired
 * Time limit in blocks
 * Minimum bitcoin transaction fee
@@ -502,9 +505,11 @@ The cancel will apply to the amount that has not yet been accepted. The UI must 
 
 If you want to cancel an offer, use Action = 3 (Cancel) and send the transaction before the full amount for sale has been accepted. Note that while the portion of an offer which has been accepted cannot be canceled, sending the cancel message still has an effect, in that it cancels any portion of the offer which has not been accepted, and it prevents accepted coins from being relisted if the buyer fails to send payment. 
 
-### Purchase Mastercoins with Bitcoins
+### Purchase Tokens of an Omni Layer Currency with Bitcoins
 
-Description: Transaction type 22 posts acceptance of an offer to sell Mastercoins for bitcoins. All or some of the coins offered can be purchased with this transaction.
+Description: Transaction type 22 posts acceptance of an offer to sell tokens of an Omni Layer Currency for bitcoins. All or some of the coins offered can be purchased with this transaction.
+
+Note: Transaction type 22, version 0, posts acceptance of an offer to sell Omni Token for bitcoins. All or some of the coins offered can be purchased with this transaction.
 
 The reference address must point to the seller's address, to identify whose offer you are accepting. The purchaser’s address must be different than the seller’s address.
 
