@@ -450,9 +450,11 @@ Consequently, the messages below are different for Omni Protocol token/bitcoin e
 
 ### Sell Omni Protocol Tokens for Bitcoins
 
-Description: Transaction type 20, version 2 posts the terms of an offer to sell tokens of an Omni Protocol currency for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are any existing Omni Protocol property identifiers.
+Description: Transaction type 20, version 2 posts the terms of an offer to sell tokens of an Omni Protocol currency, including Omni Tokens or Test Omni Tokens, for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are any existing Omni Protocol property identifiers.
 
-Note: Transaction type 20, version 1 posts the terms of an offer to sell Omni Tokens or Test Omni Tokens for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for Omni Tokens or 2 for Test Omni Tokens.
+**Note: Effective with support for version 2 of Transaction Type 20, starting in block XXXXXX, new instances of Transaction Type 20 versions 0 and 1 will not be valid. **
+
+Transaction type 20, version 1 posts the terms of an offer to sell only Omni Tokens or Test Omni Tokens for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for Omni Tokens or 2 for Test Omni Tokens.
 
 **Is this still true, starting with support for selling any OL currency for bitcoins?**
 Note: An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has *any* active offer that accepts Bitcoins. Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins.
