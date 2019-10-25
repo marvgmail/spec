@@ -548,8 +548,7 @@ Description: Transaction type 30 posts the terms of a new offer to sell an Omni 
 If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), the transaction is invalid.
 
 The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". The sell offer is invalid if the computed unit price is 0. Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
-
-The sell offer is assigned a unique id for the life of the offer (i.e. until it is cancelled or fully accepted and paid for), even if the terms of the offer are changed in the future. The id must be different than the id's for all other sell offers that are active at the time OmniCore processes the sell offer, otherwise the sell offer is not valid.
+[??? DO WE CARE ABOUT OVERFLOW FOR THE COMPUTED UNIT PRICE, AS WELL AS UNDERFLOW???]
 
 The id is the hash of the following data items, in the order listed:
 [??? NEED ADDITIONAL INFO ABOUT THE HASH]
@@ -566,7 +565,7 @@ The id is the hash of the following data items, in the order listed:
 
 Note: An address can create multiple simultaneous Sell Omni Protocol Currencies for Bitcoins offers for different Omni Protocol Currencies. Each offer is independent of any others; the unique id is used to specify a sell offer.
 
-Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins. [??? NEED TO CLEAN THIS UP]
+Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins. [??? NEED TO CLEAN UP THIS SENTENCE OR REMOVE IT.]
 
 [??? NEED DETAILS HERE ABOUT OMNI TOKEN FEE PAID BY SELLER TO STAKED OMNI TOKEN HOLDERS]
 
